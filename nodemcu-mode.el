@@ -36,6 +36,11 @@
   "Compile modules on upload."
   :type 'boolean)
 
+(defcustom nodemcu-clear-on-upload
+  't
+  "Remove uploaded module from 'package.loaded' Lua table."
+  :type 'boolean)
+
 (defcustom nodemcu-debug-io
   nil
   "Enable mode I/O debugging."
@@ -177,6 +182,8 @@
         (base (file-name-base file))
         (ext (file-name-extension file)))
     (nodemcu-with-connection
+     (when nodemcu-clear-on-upload
+       (nodemcu-do-request (format "package.loaded[\"%s\"]=nil\n" name)))
      (nodemcu-do-request (format "file.remove(\"%s\")\n" name))
      (nodemcu-do-request (format "file.open(\"%s\", \"w\")\n" name))
      (mapc (lambda (line)
