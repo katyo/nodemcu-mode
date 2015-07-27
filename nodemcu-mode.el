@@ -41,6 +41,11 @@
   "Remove uploaded module from 'package.loaded' Lua table."
   :type 'boolean)
 
+(defcustom nodemcu-restart-on-upload
+  nil
+  "Restart node after uploading Lua module."
+  :type 'boolean)
+
 (defcustom nodemcu-debug-io
   nil
   "Enable mode I/O debugging."
@@ -194,6 +199,8 @@
        (nodemcu-do-request (format "file.remove(\"%s.lc\")\n" base))
        (nodemcu-show-result (nodemcu-do-request (format "print(node.compile(\"%s\"))\n" name)))
        (nodemcu-do-request (format "file.remove(\"%s\")\n" name)))
+     (when nodemcu-restart-on-upload
+       (nodemcu-do-request "node.restart()\n"))
      )))
 
 (defun nodemcu-remove-file (file)
