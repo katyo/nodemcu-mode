@@ -200,7 +200,7 @@
   :lighter " NodeMCU"
   :keymap (let ((map (make-sparse-keymap)))
             (define-key map (kbd "C-c C-e") 'nodemcu-evaluate)
-            (define-key map (kbd "C-c C-r") 'nodemcu-execute)
+            (define-key map (kbd "C-c C-t") 'nodemcu-execute)
             (define-key map (kbd "C-x C-e") 'nodemcu-evaluate-at-point)
             (define-key map (kbd "C-c C-h") 'nodemcu-get-heap)
             (define-key map (kbd "C-c C-b") 'nodemcu-send-buffer)
