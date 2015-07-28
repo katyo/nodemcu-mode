@@ -196,19 +196,19 @@
         (ext (file-name-extension file)))
     (nodemcu-with-connection
      (when nodemcu-clear-on-upload
-       (nodemcu-do-request (format "package.loaded[\"%s\"]=nil\n" name)))
-     (nodemcu-do-request (format "file.remove(\"%s\")\n" name))
-     (nodemcu-do-request (format "file.open(\"%s\", \"w\")\n" name))
+       (nodemcu-do-request (format "package.loaded[\"%s\"]=nil" name)))
+     (nodemcu-do-request (format "file.remove(\"%s\")" name))
+     (nodemcu-do-request (format "file.open(\"%s\", \"w\")" name))
      (mapc (lambda (line)
-             (nodemcu-do-request (format "file.writeline([===[%s]===])\n" line)))
+             (nodemcu-do-request (format "file.writeline([===[%s]===])" line)))
            (split-string (nodemcu-file-contents file) "\n"))
-     (nodemcu-do-request (format "file.close()\n" name))
+     (nodemcu-do-request (format "file.close()" name))
      (when (and nodemcu-compile-on-upload (string-equal "lua" ext) (not (nodemcu-test-patterns nodemcu-no-compile name)))
-       (nodemcu-do-request (format "file.remove(\"%s.lc\")\n" base))
-       (nodemcu-show-result (nodemcu-do-request (format "print(node.compile(\"%s\"))\n" name)))
-       (nodemcu-do-request (format "file.remove(\"%s\")\n" name)))
+       (nodemcu-do-request (format "file.remove(\"%s.lc\")" base))
+       (nodemcu-show-result (nodemcu-do-request (format "print(node.compile(\"%s\"))" name)))
+       (nodemcu-do-request (format "file.remove(\"%s\")" name)))
      (when nodemcu-restart-on-upload
-       (nodemcu-do-request "node.restart()\n"))
+       (nodemcu-do-request "node.restart()"))
      )))
 
 (defun nodemcu-remove-file (file)
