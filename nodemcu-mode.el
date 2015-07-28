@@ -36,6 +36,11 @@
   "Compile modules on upload."
   :type 'boolean)
 
+(defcustom nodemcu-no-compile
+  '("init.lua")
+  "File patterns to skip compilation."
+  :type '(repeat regexp))
+
 (defcustom nodemcu-clear-on-upload
   't
   "Remove uploaded module from 'package.loaded' Lua table."
@@ -181,6 +186,9 @@
     (insert-file-contents file)
     (buffer-string)))
 
+(defun nodemcu-test-patterns (pat str)
+  (some (lambda (pat) (string-match-p pat str)) pat))
+
 (defun nodemcu-upload-file (file)
   (interactive "fNodeMCU file to upload: ")
   (let ((name (file-name-nondirectory file))
@@ -195,7 +203,7 @@
              (nodemcu-do-request (format "file.writeline([===[%s]===])\n" line)))
            (split-string (nodemcu-file-contents file) "\n"))
      (nodemcu-do-request (format "file.close()\n" name))
-     (when (and nodemcu-compile-on-upload (string-equal "lua" ext))
+     (when (and nodemcu-compile-on-upload (string-equal "lua" ext) (not (nodemcu-test-patterns nodemcu-no-compile name)))
        (nodemcu-do-request (format "file.remove(\"%s.lc\")\n" base))
        (nodemcu-show-result (nodemcu-do-request (format "print(node.compile(\"%s\"))\n" name)))
        (nodemcu-do-request (format "file.remove(\"%s\")\n" name)))
