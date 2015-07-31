@@ -56,15 +56,9 @@
   "Enable mode I/O debugging."
   :type 'boolean)
 
-(defun nodemcu-wait-establish (connection)
-  (while (eq 'connect (process-status connection))
-    (sleep-for 100))
-  connection)
-
 (defun nodemcu-open-connection ()
   (when (get-process "nodemcu-connection")
     (delete-process "nodemcu-connection"))
-  (nodemcu-wait-establish
    (pcase nodemcu-interface
      (`nodemcu-interface-serial
       (make-serial-process :name "nodemcu-connection"
@@ -73,17 +67,22 @@
                            :speed nodemcu-target-speed))
      (`nodemcu-interface-network
       (make-network-process :name "nodemcu-connection"
-                            :nowait t
                             :noquery t
                             :host nodemcu-target-host
                             :service nodemcu-target-port))
-     )))
+     ))
 
 ;;(let ((conn (nodemcu-open-connection))) (message "%s %s" (process-status conn) (process-status "nodemcu-connection")) (delete-process conn))
 
+(defun nodemcu-get-interface (connection)
+  (pcase (process-status connection)
+    (`run 'nodemcu-interface-serial)
+    (`connect 'nodemcu-interface-network)))
+
 (defun nodemcu-input-output (connection input &optional timeout)
   (setq input (concat input "\n"))
-  (let ((output nil))
+  (let ((interface (nodemcu-get-interface connection))
+        (output nil))
     (set-process-filter connection
                         (lambda (_ chunk)
                           (setq output (if output
@@ -94,13 +93,18 @@
     (process-send-string connection input)
     (when (accept-process-output connection timeout)
       ;;(let ((output_ nil)) (while (not (eq output_ output)) (setq output_ output) (sleep-for 0.1)))
-      (while (not (string-suffix-p "\n> " output)) (sleep-for 0.1))
-      (setq output (replace-regexp-in-string "\n\n" "\n" output))
-      (setq output (substring output 0 (- (length output) (length "\n> "))))
+      (while (not (string-suffix-p "> " output)) (sleep-for 0.1))
+      (pcase interface
+        (`nodemcu-interface-serial
+         (setq output (replace-regexp-in-string "\n\n" "\n" output))))
+      (setq output (substring output 0 (- (length output) (length "> "))))
       (when nodemcu-debug-io
         (message "NodeMCU output: [=[%s]=]" output))
       (when (string-prefix-p input output)
-        (setq output (substring output (length input)))))
+        (setq output (substring output (length input))))
+      (when (string-suffix-p "\n" output)
+        (setq output (substring output 0 (- (length output) 1))))
+      )
     (set-process-filter connection nil)
     output))
 
