@@ -221,6 +221,11 @@
        (nodemcu-do-request "node.restart()"))
      )))
 
+(defun nodemcu-format-fs ()
+  (interactive)
+  (nodemcu-show-result
+   (nodemcu-execute "file.format()")))
+
 (defun nodemcu-remove-file (file)
   (interactive
    (list (completing-read "NodeMCU remove file: "
@@ -237,6 +242,7 @@
             (define-key map (kbd "C-c C-h") 'nodemcu-get-heap)
             (define-key map (kbd "C-c C-b") 'nodemcu-send-buffer)
             (define-key map (kbd "C-c C-r") 'nodemcu-restart-node)
+            (define-key map (kbd "C-c C-k") 'nodemcu-format-fs)
             (define-key map (kbd "C-c C-s") 'nodemcu-list-files)
             (define-key map (kbd "C-c C-d") 'nodemcu-remove-file)
             (define-key map (kbd "C-c C-u") 'nodemcu-upload-file)
