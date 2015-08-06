@@ -200,7 +200,7 @@
   (some (lambda (pat) (string-match-p pat str)) pat))
 
 (defun nodemcu-upload-file (file)
-  (interactive "fNodeMCU file to upload: ")
+  (interactive "fNodeMCU upload file: ")
   (let ((name (file-name-nondirectory file))
         (base (file-name-base file))
         (ext (file-name-extension file)))
