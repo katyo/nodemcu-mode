@@ -226,6 +226,15 @@
   (nodemcu-show-result
    (nodemcu-execute "file.format()")))
 
+(defun nodemcu-parse-fs-info (str)
+  (split-string str "[ \t]+"))
+
+(defun nodemcu-fs-info ()
+  (interactive)
+  (nodemcu-parse-fs-info
+   (nodemcu-show-result
+    (nodemcu-evaluate "file.fsinfo()"))))
+
 (defun nodemcu-remove-file (file)
   (interactive
    (list (completing-read "NodeMCU remove file: "
@@ -243,6 +252,7 @@
             (define-key map (kbd "C-c C-b") 'nodemcu-send-buffer)
             (define-key map (kbd "C-c C-r") 'nodemcu-restart-node)
             (define-key map (kbd "C-c C-k") 'nodemcu-format-fs)
+            (define-key map (kbd "C-c C-a") 'nodemcu-fs-info)
             (define-key map (kbd "C-c C-s") 'nodemcu-list-files)
             (define-key map (kbd "C-c C-d") 'nodemcu-remove-file)
             (define-key map (kbd "C-c C-u") 'nodemcu-upload-file)
