@@ -181,11 +181,14 @@
               (cons (car x) (string-to-number (cadr x) 10))))
   (split-string list "\n")))
 
-(defun nodemcu-list-files ()
+(defun nodemcu-list-files (&optional what)
   (interactive)
-  (nodemcu-parse-file-list
-   (nodemcu-show-result
-    (nodemcu-execute "for n,s in pairs(file.list()) do print(n..\" \"..s) end"))))
+  (funcall (pcase what
+             (`names (lambda (files) (mapcar 'car files)))
+             (_ (lambda (files) files)))
+           (nodemcu-parse-file-list
+            (nodemcu-show-result
+             (nodemcu-execute "for n,s in pairs(file.list()) do print(n..\" \"..s) end")))))
 
 (defun nodemcu-file-contents (file)
   "Get contents of local file."
