@@ -77,7 +77,7 @@
 
 (defun nodemcu-get-interface (connection)
   (pcase (process-status connection)
-    (`run 'nodemcu-interface-serial)
+    (`open 'nodemcu-interface-serial)
     (`connect 'nodemcu-interface-network)))
 
 (defun nodemcu-input-output (connection input &optional timeout)
