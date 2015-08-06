@@ -235,6 +235,15 @@
    (nodemcu-show-result
     (nodemcu-evaluate "file.fsinfo()"))))
 
+(defun nodemcu-rename-file (from to)
+  (interactive
+   (let* ((files (nodemcu-list-files 'names))
+          (from (completing-read "NodeMCU rename file: " files))
+          (to (completing-read (format "NodeMCU rename file: %s to: " from) files)))
+     (list from to)))
+  (nodemcu-show-result
+   (nodemcu-evaluate (format "file.rename(\"%s\", \"%s\")" from to))))
+
 (defun nodemcu-remove-file (file)
   (interactive
    (list (completing-read "NodeMCU remove file: "
@@ -255,5 +264,6 @@
             (define-key map (kbd "C-c C-a") 'nodemcu-fs-info)
             (define-key map (kbd "C-c C-s") 'nodemcu-list-files)
             (define-key map (kbd "C-c C-d") 'nodemcu-remove-file)
+            (define-key map (kbd "C-c C-n") 'nodemcu-rename-file)
             (define-key map (kbd "C-c C-u") 'nodemcu-upload-file)
             map))
