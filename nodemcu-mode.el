@@ -1,4 +1,5 @@
 ;; -*- lexical-binding: nil -*-
+(require 'cl)
 
 (defgroup nodemcu '()
   "Helper mode for NodeMCU users.")
