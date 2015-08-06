@@ -247,8 +247,9 @@
 (defun nodemcu-remove-file (file)
   (interactive
    (list (completing-read "NodeMCU remove file: "
-                          (mapcar 'car (nodemcu-list-files)))))
-  (nodemcu-execute (format "file.remove(\"%s\")" file)))
+                          (nodemcu-list-files 'names))))
+  (nodemcu-show-result
+   (nodemcu-evaluate (format "file.remove(\"%s\")" file))))
 
 (define-minor-mode nodemcu-mode
   "Helper mode for NodeMCU users."
