@@ -268,3 +268,5 @@
             (define-key map (kbd "C-c C-n") 'nodemcu-rename-file)
             (define-key map (kbd "C-c C-u") 'nodemcu-upload-file)
             map))
+
+(provide 'nodemcu-mode)
